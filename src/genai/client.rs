@@ -9,12 +9,12 @@ use reqwest::header::AUTHORIZATION;
 use reqwest::Client;
 use reqwest::Proxy;
 
-pub struct openai_client {
+pub struct OpenaiClient {
     client: Client,
     config: ModelConfiguration,
 }
 
-impl openai_client {
+impl OpenaiClient {
     pub fn new<S: Into<String>>(api_key: S) -> Result<Self> {
         Self::new_with_config(api_key, ModelConfiguration::default())
     }
@@ -26,7 +26,7 @@ impl openai_client {
     pub fn new_with_config<S: Into<String>>(
         api_key: S,
         config: ModelConfiguration,
-    ) -> Result<openai_client> {
+    ) -> Result<OpenaiClient> {
         let api_key = api_key.into();
         let mut headers = HeaderMap::new();
         headers.insert(
@@ -44,7 +44,7 @@ impl openai_client {
         api_key: S,
         config: ModelConfiguration,
         proxy: Proxy,
-    ) -> Result<openai_client> {
+    ) -> Result<OpenaiClient> {
         let api_key = api_key.into();
         let mut headers = HeaderMap::new();
         headers.insert(
@@ -62,7 +62,7 @@ impl openai_client {
     pub async fn send_img_generation_request<S: Into<String>>(
         &self,
         message: S,
-    ) -> Result<Vec<ImageGenerationResponse>> {
+    ) -> Result<ImageGenerationResponse> {
         let response = self
             .client
             .post(self.config.api_url.clone())
