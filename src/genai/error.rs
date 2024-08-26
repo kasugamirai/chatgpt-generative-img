@@ -1,7 +1,7 @@
 use thiserror::Error;
 
 #[derive(Error, Debug)]
-pub enum ImageGenerationError {
+pub enum Error {
     #[error("Request failed with status code: {0}")]
     RequestFailed(reqwest::StatusCode),
 
@@ -12,5 +12,8 @@ pub enum ImageGenerationError {
     MissingEnvVar(String),
 
     #[error("Reqwest error: {0}")]
-    ReqwestError(#[from] reqwest::Error),
+    Reqwest(#[from] reqwest::Error),
+
+    #[error("Header value error: {0}")]
+    HeaderValue(#[from] reqwest::header::InvalidHeaderValue),
 }

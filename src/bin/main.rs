@@ -1,11 +1,10 @@
-use chatgpt_generative_img::generate_images;
+use chatgpt_generative_img::prelude::*;
 use reqwest::Client;
 use tracing::error;
 use tracing::info;
 
 #[tokio::main]
 async fn main() {
-    // 设置 tracing subscriber
     tracing_subscriber::fmt::init();
 
     let client = Client::new();

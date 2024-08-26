@@ -1,2 +1,2 @@
-mod genai;
-pub use genai::generate_images;
+pub mod genai;
+pub mod prelude;

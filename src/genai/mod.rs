@@ -1,35 +1,29 @@
+mod client;
+mod config;
 mod error;
-pub use error::ImageGenerationError;
+mod types;
+
 use reqwest::Client;
-use serde::{Deserialize, Serialize};
 use std::env;
 
-#[derive(Serialize)]
-pub struct ImageGenerationRequest {
-    pub prompt: String,
-    pub n: u8,
-    pub size: String,
-}
+pub use client::openai_client;
+pub use config::ModelConfiguration;
+pub use error::Error;
+pub use types::ImageGenerationRequest;
+pub use types::ImageGenerationResponse;
 
-#[derive(Deserialize)]
-pub struct ImageData {
-    pub url: String,
-}
+pub type Result<T> = std::result::Result<T, Error>;
 
-#[derive(Deserialize)]
-pub struct ImageGenerationResponse {
-    pub created: u64,
-    pub data: Vec<ImageData>,
-}
+/// Generate images using the OpenAI API.
 
 pub async fn generate_images(
     client: &Client,
     prompt: &str,
     n: u8,
     size: &str,
-) -> Result<Vec<String>, ImageGenerationError> {
+) -> Result<Vec<String>> {
     let api_key = env::var("OPENAI_API_KEY")
-        .map_err(|_| ImageGenerationError::MissingEnvVar("OPENAI_API_KEY".to_string()))?;
+        .map_err(|_| Error::MissingEnvVar("OPENAI_API_KEY".to_string()))?;
 
     let request_body = ImageGenerationRequest {
         prompt: prompt.to_string(),
@@ -49,13 +43,13 @@ pub async fn generate_images(
         let response_body: ImageGenerationResponse = response
             .json()
             .await
-            .map_err(|err| ImageGenerationError::ResponseParsingFailed(err.to_string()))?;
+            .map_err(|err| Error::ResponseParsingFailed(err.to_string()))?;
         Ok(response_body
             .data
             .into_iter()
             .map(|image| image.url)
             .collect())
     } else {
-        Err(ImageGenerationError::RequestFailed(response.status()))
+        Err(Error::RequestFailed(response.status()))
     }
 }
