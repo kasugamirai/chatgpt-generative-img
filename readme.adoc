@@ -1,0 +1,9 @@
+# OpenAI Image Generation Client
+
+This Rust library provides a client for interacting with the OpenAI API to generate images based on text prompts.
+
+## Features
+
+- Create a new client with or without a proxy.
+- Send image generation requests to the OpenAI API.
+- Parse and handle responses from the API.
